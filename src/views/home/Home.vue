@@ -46,6 +46,7 @@ import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "common/utils";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 
 export default {
   name: "Home",
@@ -59,6 +60,7 @@ export default {
     Scroll,
     BackTop,
   },
+  // mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -86,6 +88,7 @@ export default {
   },
   deactivated() {
     this.saveY = this.$refs.scroll.getScrollY();
+    this.$bus.$off("itemInagLoad", this.itemImgListener);
   },
   created() {
     // 请求多个数据
@@ -103,7 +106,6 @@ export default {
       // this.$refs.scroll.refresh();
       refresh();
     });
-
     // 获取tabControl的offsetTop
     // 所有组件都有一个属性$el，这个属性用于组件中的元素
   },
