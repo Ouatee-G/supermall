@@ -29,7 +29,7 @@
       <goods-list :goods="showGoods" />
     </scroll>
 
-    <back-top @click.native="backClick" v-show="isShowBackTop" />
+    <back-top @click.native="backTop" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -42,10 +42,8 @@ import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/common/scroll/Scroll";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
-import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import { debounce } from "common/utils";
 import { itemListenerMixin, backTopMixin } from "common/mixin";
 
 export default {
@@ -58,9 +56,8 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
   },
-  // mixins: [itemListenerMixin, backTopMixin],
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -71,7 +68,6 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
@@ -87,8 +83,10 @@ export default {
     this.$refs.scroll.refresh();
   },
   deactivated() {
+    // 保存Y值
     this.saveY = this.$refs.scroll.getScrollY();
-    this.$bus.$off("itemInagLoad", this.itemImgListener);
+    // 取消全局事件监听
+    this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   created() {
     // 请求多个数据
@@ -99,15 +97,17 @@ export default {
     this.getHomeGoods("sell");
   },
   mounted() {
-    // 图片加载的事件监听
-    const refresh = debounce(this.$refs.scroll.refresh, 500);
-    //检测图片加载完成
-    this.$bus.$on("itemImageLoad", () => {
-      // this.$refs.scroll.refresh();
-      refresh();
-    });
+    // 详情见Mixin
+    // // 图片加载的事件监听
+    // const refresh = debounce(this.$refs.scroll.refresh, 500);
+    // //检测图片加载完成
+    // this.$bus.$on("itemImageLoad", () => {
+    //   // this.$refs.scroll.refresh();
+    //   refresh();
+    // });
     // 获取tabControl的offsetTop
     // 所有组件都有一个属性$el，这个属性用于组件中的元素
+    this.tabClick(0);
   },
   methods: {
     // 事件监听相关的方法
@@ -126,12 +126,9 @@ export default {
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0);
-    },
     contentScroll(position) {
       // 判断BackTop是否显示
-      this.isShowBackTop = -position.y > 1000;
+      this.listenShowBackTop(position);
       // 决定tabControl是否吸顶
       this.isTabFixed = -position.y > this.tabOffsetTop;
     },

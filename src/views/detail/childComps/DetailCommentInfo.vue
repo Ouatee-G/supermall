@@ -38,6 +38,9 @@ export default {
   props: {
     commentInfo: {
       type: Object,
+      default() {
+        return {};
+      },
     },
   },
   filters: {

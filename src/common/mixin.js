@@ -5,15 +5,19 @@ import { BACK_POSITION } from "common/const";
 export const itemListenerMixin = {
     data() {
         return {
-            itemImgListener: null
+            itemImgListener: null,
+            refresh: null,
         }
     },
     mounted() {
-        let newRefresh = debounce(this.$refs.scroll.refresh, 100);
+        // 图片加载的事件监听
+        this.refresh = debounce(this.$refs.scroll.refresh, 500);
         this.itemImgListener = () => {
-            newRefresh();
+            // this.$refs.scroll.refresh();
+            this.refresh();
         };
-        this.$bus.$on("itemImgLoad", this.itemImgListener);
+        //检测图片加载完成
+        this.$bus.$on("itemImageLoad", this.itemImgListener);
     }
 }
 export const backTopMixin = {

@@ -1,33 +1,18 @@
 <template>
-  <div class="wrapper" ref="aaaa">
+  <div>
     <h2>分类</h2>
-
-    <div>
-      <button @click="btnClick">按钮</button>
-
-      <div @click="divClick">呵呵呵呵</div>
-
-      <ul class="content">
-        <li>分类列表1</li>
-        <li>分类列表2</li>
-        <li>分类列表3</li>
-        <li>分类列表4</li>
-        <li>分类列表5</li>
-        <li>分类列表6</li>
-        <li>分类列表7</li>
-        <li>分类列表8</li>
-        <li>分类列表9</li>
-        <li>分类列表10</li>
-      </ul>
-    </div>
+    <back-top @click.native="backTop" v-show="isShowBackTop" />
   </div>
 </template>
 
 <script>
-import BScroll from "better-scroll";
+import { backTopMixin } from "common/mixin";
 
 export default {
+  components: { BackTop },
   name: "Category",
+  mixins: [backTopMixin],
+
   data() {
     return {
       scroll: null,
