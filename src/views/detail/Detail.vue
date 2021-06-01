@@ -18,6 +18,8 @@
     </scroll>
     <detail-bottom-bar @addCart="addToCart" />
     <back-top @click.native="backTop" v-show="isShowBackTop" />
+
+    <!-- <toast message="哈哈哈" :show="show" /> -->
   </div>
 </template>
 
@@ -36,6 +38,7 @@ import GoodsList from "components/content/goods/GoodsList";
 
 import { debounce } from "common/utils";
 import { itemListenerMixin, backTopMixin } from "common/mixin";
+import { mapActions } from "vuex";
 
 import {
   getDetail,
@@ -131,6 +134,7 @@ export default {
     this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   methods: {
+    ...mapActions(["addCart"]),
     imageLoad() {
       this.$refs.scroll.refresh();
       this.getThemeTopY();
@@ -166,7 +170,14 @@ export default {
 
       // 2.将商品添加至购物车中
       // this.$store.commit("addCart", product);
-      this.$store.dispatch("addCart", product);
+
+      // this.$store.dispatch("addCart", product).then((res) => {
+      //   console.log(res);
+      // });
+      this.addCart(product).then((res) => {
+        console.log(this.$toast);
+        this.$toast.show(res, 2000);
+      });
     },
   },
 };
